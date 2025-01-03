@@ -1,0 +1,24 @@
+%dw 2.0
+
+type auto_b4ccd68f_75dd_4860_9109_ba0982a562f8_Input_Variables_covidCasePayload = {|
+  case_id: Null, 
+  source: Null, 
+  case_type: Null, 
+  first_name: Null, 
+  last_name: Null, 
+  phone: Null, 
+  email: Null, 
+  date_of_birth: String {"format": "yyyy-MM-dd"}, 
+  national_id: Null, 
+  national_id_type: Null, 
+  street_address: Null, 
+  city: Null, 
+  state: Null, 
+  postal: Null, 
+  country: Null, 
+  create_date: String {"format": "yyyy-MM-dd"}, 
+  update_date: String {"format": "yyyy-MM-dd"}, 
+  create_by: String, 
+  update_by: String
+|}
+

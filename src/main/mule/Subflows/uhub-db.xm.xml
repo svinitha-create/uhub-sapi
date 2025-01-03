@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<sub-flow name="insert-covid-case" doc:id="a3a3a8b5-8edf-4f5a-b896-820fc9a755eb" >
+		<logger level="INFO" doc:name="Before insert" doc:id="105ad772-fb2c-414e-b2a6-acff1804b560" message="insert into DB #[payload]"/>
+		<db:insert doc:name="Insert" doc:id="db479244-4067-4942-a71b-b9830ce7acf0" config-ref="Database_Config" autoGenerateKeys="true">
+			<db:sql ><![CDATA[
+insert into cvd_case_master(source, case_type, first_name, last_name, phone, email, date_of_birth, national_id, national_id_type, street_address, city, state, postal, country, create_date, update_date, create_by, update_by) values(:source, :case_type, :first_name, :last_name, :phone, :email, TO_DATE(:date_of_birth, 'YYYY-MM-DD'), :national_id, :national_id_type, :street_address, :city, :state, :postal, :country, TO_DATE(:create_date, 'YYYY-MM-DD'), TO_DATE(:update_date, 'YYYY-MM-DD'), :create_by, :update_by)
+
+]]></db:sql>
+			<db:input-parameters ><![CDATA[#[payload]]]></db:input-parameters>
+			<db:auto-generated-keys-column-names >
+				<db:auto-generated-keys-column-name value="CASE_ID" />
+			</db:auto-generated-keys-column-names>
+		</db:insert>
+		<logger level="INFO" doc:name="After Insert" doc:id="7af8395c-fb98-4bdb-840e-5863ae0cfa19" message="completed inserrt database call"/>
+	</sub-flow>
+	<sub-flow name="update-covid-case" doc:id="f64855fb-dbc3-49ae-9cc1-952413dbba73" >
+		<logger level="INFO" doc:name="Before Update" doc:id="e43eb635-61f6-46b2-b706-44f90d2743c7" message='transactionID: #[vars.transactionId]], correlationID: #[vars.correlationID], message: "Before update case database call", payload: #[payload]'/>
+		<db:update doc:name="Update" doc:id="23dc8f7b-eaae-4c34-b943-45cc034cbbda" config-ref="Database_Config">
+			<db:sql ><![CDATA[update cvd_case_master set source=:source, case_type=:case_type, first_name=:first_name, last_name=:last_name, phone=:phone, email=:email, date_of_birth=TO_DATE(:date_of_birth, 'YYYY-MM-DD'), national_id=:national_id, national_id_type=:national_id_type, street_address=:street_address, city=:city, state=:state, postal=:postal, country=:country, update_date=TO_DATE(:update_date, 'YYYY-MM-DD'), create_by=:create_by, update_by=:update_by where case_id=:case_id
+			]]></db:sql>
+			<db:input-parameters ><![CDATA[#[vars.covidCasePayload]]]></db:input-parameters>
+		</db:update>
+		<logger level="INFO" doc:name="After update" doc:id="5b8f494e-b47a-43ad-b706-84d65d1e6e78" message='transactionID: #[vars.transactionId]], correlationID: #[vars.correlationID], message: "Completed update case database call"'/>
+	</sub-flow>
+</mule>
